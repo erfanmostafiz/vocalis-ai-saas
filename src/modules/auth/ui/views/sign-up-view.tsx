@@ -4,7 +4,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { OctagonAlertIcon } from "lucide-react";
 import { useForm } from "react-hook-form";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+
 import { useState } from "react";
 
 import { Input } from "@/components/ui/input";
@@ -35,7 +35,6 @@ const formSchema = z
     });
 
 export const SignUpView = () => {
-    const router = useRouter();
     const [error, setError] = useState<string | null>(null);
     const [pending, setPending] = useState(false);
 
@@ -55,20 +54,43 @@ export const SignUpView = () => {
 
         authClient.signUp.email(
             // arg 1
-            { name: data.name, email: data.email, password: data.password },
+            {
+                name: data.name,
+                email: data.email,
+                password: data.password,
+                callbackURL: "/",
+            },
             // arg 2
             {
                 onSuccess: () => {
                     setPending(false);
-                    router.push("/");
                 },
                 onError: ({ error }) => {
+                    setPending(false);
                     setError(error.message);
                 },
             },
         );
+    };
 
-        setPending(false);
+    const onSocial = (provider: "github" | "google") => {
+        setError(null);
+        setPending(true);
+
+        authClient.signIn.social(
+            // arg 1
+            { provider: provider, callbackURL: "/" },
+            // arg 2
+            {
+                onSuccess: () => {
+                    setPending(false);
+                },
+                onError: ({ error }) => {
+                    setPending(false);
+                    setError(error.message);
+                },
+            },
+        );
     };
 
     return (
@@ -200,6 +222,7 @@ export const SignUpView = () => {
                                 <div className="grid grid-cols-2 gap-4">
                                     <Button
                                         disabled={pending}
+                                        onClick={() => onSocial("google")}
                                         variant="outline"
                                         type="button"
                                         className="w-full"
@@ -209,6 +232,7 @@ export const SignUpView = () => {
 
                                     <Button
                                         disabled={pending}
+                                        onClick={() => onSocial("github")}
                                         variant="outline"
                                         type="button"
                                         className="w-full"
