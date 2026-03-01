@@ -6,6 +6,7 @@ import { useForm } from "react-hook-form";
 import Link from "next/link";
 
 import { useState } from "react";
+import { FaGithub, FaGoogle } from "react-icons/fa";
 
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -21,6 +22,7 @@ import {
     FormLabel,
     FormMessage,
 } from "@/components/ui/form";
+import { useRouter } from "next/navigation";
 
 const formSchema = z
     .object({
@@ -35,6 +37,8 @@ const formSchema = z
     });
 
 export const SignUpView = () => {
+    const router = useRouter();
+
     const [error, setError] = useState<string | null>(null);
     const [pending, setPending] = useState(false);
 
@@ -64,6 +68,7 @@ export const SignUpView = () => {
             {
                 onSuccess: () => {
                     setPending(false);
+                    router.push("/");
                 },
                 onError: ({ error }) => {
                     setPending(false);
@@ -210,7 +215,7 @@ export const SignUpView = () => {
                                     type="submit"
                                     className="w-full"
                                 >
-                                    Sign in
+                                    Sign up
                                 </Button>
 
                                 <div className="after:border-border relative text-center text-sm after:absolute after:inset-0 after:top-1/2 after:z-0 after:flex after:items-center after:border-t">
@@ -227,7 +232,7 @@ export const SignUpView = () => {
                                         type="button"
                                         className="w-full"
                                     >
-                                        Google
+                                        <FaGoogle />
                                     </Button>
 
                                     <Button
@@ -237,7 +242,7 @@ export const SignUpView = () => {
                                         type="button"
                                         className="w-full"
                                     >
-                                        GitHub
+                                        <FaGithub />
                                     </Button>
                                 </div>
 
